@@ -1,4 +1,10 @@
 <div class="container">
+  <% if flash[:notice].present? %>
+    <div class="notice">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+  
   <h1 class="text-4xl font-bold">Create New Short URL</h1>
 
   <%= form_with(model: @url, data: { turbo: false } ) do |f| %>
@@ -10,8 +16,4 @@
       <%= f.submit 'Create Short URL', class: "save-btn" %>
     </div>
   <% end %>
-
-  <div class="mt-10">
-    <%= link_to 'Back', root_path, class: "back-btn" %>
-  </div>
 </div>

@@ -6,32 +6,38 @@ class UrlsController < ApplicationController
 
   def create
     @url = Url.new(url_params)
-    @url.short_url = SecureRandom.hex(4)
-
+    @url.generate_short_url
+  
     if @url.save
-      # 將短連結存入Redis Hash
-      $redis.hset('urls', @url.short_url, @url.original_url)
-      redirect_to @url, notice: '短連結已經建立'
+      hash = {
+        "url" => @url.original_url,
+        "short" => "#{ENV["WEB_DOMAIN"]}/shorts/#{@url.short_url}",
+        "slug" => @url.short_url
+      }
+      $redis.hset("id-#{@url.id}:#{@url.short_url}", hash)
+      $redis.expire("id-#{@url.id}:#{@url.short_url}", 24 * 3600)
+  
+      redirect_to url_path(@url.short_url)
     else
       render 'new'
     end
   end
-
+  
   def show
     short_url = params[:id]
-    original_url = $redis.hget('urls', short_url)
+    original_url = $redis.hget(short_url, "url")
 
     if original_url
-      redirect_to original_url
+      render 'show'
     else
-      @url = Url.find_by_short_url(short_url)
+      @url = Url.find_by(short_url: short_url)
 
       if @url
+        # 更新 Redis 中的映射和過期時間
         $redis.hset('urls', @url.short_url, @url.original_url)
-
         $redis.expire('urls', 24 * 3600)
 
-        redirect_to @url.original_url
+        render 'show'
       else
         render plain: '找不到短連結', status: 404
       end

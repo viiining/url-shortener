@@ -4,6 +4,8 @@
   <p><strong>Original URL:</strong> <%= @url.original_url %></p>
   <p><strong>Short URL:</strong> <%= @url.short_url %></p>
   
-  <%= link_to 'Go Back', root_path, class:"back-btn" %>
-
+  <div class="flex mt-10">
+    <%= link_to 'Create another short url!', root_path, class:"back-btn" %>
+    <%= link_to 'URL', @url.original_url, class: "go-btn" %>
+  </div>
 </div>

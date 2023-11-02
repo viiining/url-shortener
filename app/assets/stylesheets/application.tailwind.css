@@ -13,3 +13,7 @@
 .back-btn {
   @apply inline-block px-5 text-white bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600;
 }
+
+.go-btn {
+  @apply inline-block px-5 text-white bg-green-500 rounded-lg cursor-pointer hover:bg-green-600;
+}
